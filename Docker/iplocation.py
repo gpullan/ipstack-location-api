@@ -2,6 +2,7 @@ import requests
 import argparse
 import json
 import re
+import sys
 
 def get_location(ip_address, api_key):
     # Make a GET request to the IPStack API
@@ -28,19 +29,19 @@ def main():
     if not args.ip or not args.api_key:
         print("Please provide an IP address and API key.")
         print("The correct format is: python iplocation.py -i <IP_ADDRESS> -a <API_KEY>")
-        return
+        sys.exit(1)
     
     ip_address = args.ip
     # Check if the IP address is in the correct format
     if not re.match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", ip_address):
         print("Invalid IP address format.")
-        return
+        sys.exit(1)
 
     api_key = args.api_key
     # Check if the API key is in the correct format
     if not re.match(r"^[a-fA-F0-9]{32}$", api_key):
         print("Invalid API key format.")
-        return
+        sys.exit(1)
 
     latitude, longitude = get_location(ip_address, api_key)
 
@@ -50,8 +51,10 @@ def main():
             "longitude": longitude
         }
         print(json.dumps(location))
+        sys.exit(0)
     else:
         print("Error occurred while fetching location data.")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
